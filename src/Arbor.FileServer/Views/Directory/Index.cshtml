@@ -1,0 +1,77 @@
+﻿@using Arbor.FileServer.Hashing
+@model Arbor.FileServer.ViewModels.FilesViewModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>title</title>
+    <style type="text/css">
+        table, td, th {
+            border: 1px solid #e1e1e1;
+        }
+        table {
+            border-spacing: 0;
+        }
+
+        td, th {
+            padding: 5px;
+        }
+
+        body {
+            font-family: Consolas
+        }
+    </style>
+</head>
+<body>
+    <div>
+
+        @if (Model.Files.Length == 0)
+        {
+            <h2>Found no files</h2>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Filename</th>
+                        <th>Last modified (UTC)</th>
+                        @foreach (var item in SupportedHashAlgorithm.All)
+                        {
+                            <th>@item.AlgorithmName</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Files)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@item.MainFile">@item.MainFileRelative</a>
+                            </td>
+                            <td>
+                                @item.LastModifiedUtc.ToString("O")
+                            </td>
+
+                            @foreach (var supportedHashAlgorithm in SupportedHashAlgorithm.All)
+                            {
+                                <td>
+                                    @foreach (var hash in item.HashFiles)
+                                    {
+                                        if (hash.HashAlgorithm == supportedHashAlgorithm)
+                                        {
+                                            <a title="@hash.LastModifiedUtc.ToString("O")" href="@hash.File">@hash.HashAlgorithm.AlgorithmName</a>
+                                        }
+                                    }
+                                </td>
+                            }
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>
