@@ -30,7 +30,7 @@
             <thead>
             <tr>
                 <th>Filename</th>
-                <th>Last modified (UTC)</th>
+                <th>Metadata</th>
                 @foreach (SupportedHashAlgorithm item in SupportedHashAlgorithm.All)
                 {
                     <th>@item.AlgorithmName</th>
@@ -42,10 +42,10 @@
             {
                 <tr>
                     <td>
-                        <a href="@item.MainFile">@item.MainFileRelative</a>
+                        <a title="@item.LastModifiedUtc.ToString("o")" href="@item.MainFile">@item.MainFileRelative</a>
                     </td>
                     <td>
-                        @item.LastModifiedUtc.ToString("O")
+                        <a href="/file@(item.MainFileRelative)">Metadata</a>
                     </td>
 
                     @foreach (SupportedHashAlgorithm supportedHashAlgorithm in SupportedHashAlgorithm.All)
