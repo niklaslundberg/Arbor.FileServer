@@ -53,7 +53,7 @@ namespace Arbor.FileServer.Hashing
         {
             filesDirectory.Refresh();
 
-            List<string> removed = new List<string>();
+            var removed = new List<string>();
 
             ImmutableArray<FileInfo> hashFilesToRemove = filesDirectory.GetFiles("*", SearchOption.AllDirectories)
                 .Where(file => SupportedHashAlgorithm.All.Any(algorithm =>
@@ -85,7 +85,7 @@ namespace Arbor.FileServer.Hashing
         public static ImmutableArray<string> HashFiles(DirectoryInfo directoryInfo,
             ImmutableArray<SupportedHashAlgorithm> supportedHashAlgorithms)
         {
-            List<string> hashFiles = new List<string>();
+            var hashFiles = new List<string>();
 
             foreach (SupportedHashAlgorithm hashAlgorithm in supportedHashAlgorithms)
             {

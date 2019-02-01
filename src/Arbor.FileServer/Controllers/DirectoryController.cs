@@ -15,12 +15,12 @@ namespace Arbor.FileServer.Controllers
             var directoryInfo = new DirectoryInfo(fileServerSettings.BasePath);
 
             ImmutableArray<string> removedFiles = HashCreator.RemoveAllHashFiles(directoryInfo);
-            var createdHashFiles = HashCreator.HashFiles(directoryInfo, SupportedHashAlgorithm.All);
+            ImmutableArray<string> createdHashFiles = HashCreator.HashFiles(directoryInfo, SupportedHashAlgorithm.All);
 
             return new
             {
                 Removed = removedFiles,
-                Created = createdHashFiles,
+                Created = createdHashFiles
             };
         }
 

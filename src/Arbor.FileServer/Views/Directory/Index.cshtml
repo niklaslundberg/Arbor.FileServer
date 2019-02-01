@@ -1,4 +1,5 @@
 ﻿@using Arbor.FileServer.Hashing
+@using Arbor.FileServer.ViewModels
 @model Arbor.FileServer.ViewModels.FilesViewModel
 
 <!DOCTYPE html>
@@ -7,71 +8,64 @@
 <head>
     <title>title</title>
     <style type="text/css">
-        table, td, th {
-            border: 1px solid #e1e1e1;
-        }
-        table {
-            border-spacing: 0;
-        }
+        table, td, th { border: 1px solid #e1e1e1; }
 
-        td, th {
-            padding: 5px;
-        }
+        table { border-spacing: 0; }
 
-        body {
-            font-family: Consolas
-        }
+        td, th { padding: 5px; }
+
+        body { font-family: Consolas }
     </style>
 </head>
 <body>
-    <div>
+<div>
 
-        @if (Model.Files.Length == 0)
-        {
-            <h2>Found no files</h2>
-        }
-        else
-        {
-            <table>
-                <thead>
-                    <tr>
-                        <th>Filename</th>
-                        <th>Last modified (UTC)</th>
-                        @foreach (var item in SupportedHashAlgorithm.All)
-                        {
-                            <th>@item.AlgorithmName</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Files)
+    @if (Model.Files.Length == 0)
+    {
+        <h2>Found no files</h2>
+    }
+    else
+    {
+        <table>
+            <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Last modified (UTC)</th>
+                @foreach (SupportedHashAlgorithm item in SupportedHashAlgorithm.All)
+                {
+                    <th>@item.AlgorithmName</th>
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (FileGroup item in Model.Files)
+            {
+                <tr>
+                    <td>
+                        <a href="@item.MainFile">@item.MainFileRelative</a>
+                    </td>
+                    <td>
+                        @item.LastModifiedUtc.ToString("O")
+                    </td>
+
+                    @foreach (SupportedHashAlgorithm supportedHashAlgorithm in SupportedHashAlgorithm.All)
                     {
-                        <tr>
-                            <td>
-                                <a href="@item.MainFile">@item.MainFileRelative</a>
-                            </td>
-                            <td>
-                                @item.LastModifiedUtc.ToString("O")
-                            </td>
-
-                            @foreach (var supportedHashAlgorithm in SupportedHashAlgorithm.All)
+                        <td>
+                            @foreach (HashFile hash in item.HashFiles)
                             {
-                                <td>
-                                    @foreach (var hash in item.HashFiles)
-                                    {
-                                        if (hash.HashAlgorithm == supportedHashAlgorithm)
-                                        {
-                                            <a title="@hash.LastModifiedUtc.ToString("O")" href="@hash.File">@hash.HashAlgorithm.AlgorithmName</a>
-                                        }
-                                    }
-                                </td>
+                                if (hash.HashAlgorithm == supportedHashAlgorithm)
+                                {
+                                    <a title="@hash.LastModifiedUtc.ToString("O")" href="@hash.File">@hash.HashAlgorithm.AlgorithmName</a>
+                                }
                             }
-
-                        </tr>
+                        </td>
                     }
-                </tbody>
-            </table>
-        }
-    </div>
+
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+</div>
 </body>
 </html>

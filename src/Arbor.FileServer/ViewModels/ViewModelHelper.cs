@@ -24,7 +24,8 @@ namespace Arbor.FileServer.ViewModels
 
             string AbsolutePath(string file)
             {
-                return fileServerSettings.BaseUrl + file.Substring(fileServerSettings.BasePath.Length).Replace("\\", "/");
+                return fileServerSettings.BaseUrl +
+                       file.Substring(fileServerSettings.BasePath.Length).Replace("\\", "/");
             }
 
             string RelativePath(string file)
@@ -54,15 +55,17 @@ namespace Arbor.FileServer.ViewModels
             }
 
             var directoryInfo = new DirectoryInfo(fileServerSettings.BasePath);
-            var files = directoryInfo.GetFiles("*", SearchOption.AllDirectories)
-                .Select(file => (File: file, MainFile: GetMainFile(file), LastModified:file.LastWriteTimeUtc))
-                .Select(file => (File: AbsolutePath(file.File.FullName), MainFile: AbsolutePath(file.MainFile), LastModified:file.LastModified))
+            ImmutableArray<FileGroup> files = directoryInfo.GetFiles("*", SearchOption.AllDirectories)
+                .Select(file => (File: file, MainFile: GetMainFile(file), LastModified: file.LastWriteTimeUtc))
+                .Select(file => (File: AbsolutePath(file.File.FullName), MainFile: AbsolutePath(file.MainFile),
+                    LastModified: file.LastModified))
                 .OrderBy(file => file.File)
                 .GroupBy(group => group.MainFile)
                 .Select(group => new FileGroup(group.Key,
                     RelativePath(group.Key),
                     group.First(file => file.MainFile == file.File).LastModified,
-                    group.Select(file => new HashFile(file.File, RelativePath(file.File), file.LastModified, Parse(file.File)))
+                    group.Select(file =>
+                            new HashFile(file.File, RelativePath(file.File), file.LastModified, Parse(file.File)))
                         .Where(hashFile => hashFile.HashAlgorithm != SupportedHashAlgorithm.Undefined)
                         .ToImmutableArray()))
                 .ToImmutableArray();

@@ -8,8 +8,8 @@ namespace Arbor.FileServer.Hashing
 {
     public class FileWatcherService : BackgroundService
     {
-        private readonly HashWatcher _hashWatcher;
         private readonly DirectoryInfo _directoryInfo;
+        private readonly HashWatcher _hashWatcher;
 
         public FileWatcherService(HashWatcher hashWatcher, FileServerSettings settings)
         {

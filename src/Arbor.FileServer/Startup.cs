@@ -66,7 +66,7 @@ namespace Arbor.FileServer
 
             var hashWatcherSettings = app.ApplicationServices.GetService<FileServerSettings>();
 
-            app.UseStaticFiles(new StaticFileOptions()
+            app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(hashWatcherSettings.BasePath),
                 ServeUnknownFileTypes = true

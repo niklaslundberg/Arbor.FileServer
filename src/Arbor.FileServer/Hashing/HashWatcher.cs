@@ -21,6 +21,27 @@ namespace Arbor.FileServer.Hashing
             }
         }
 
+        public void Dispose()
+        {
+            if (_watcher is null)
+            {
+                return;
+            }
+
+            if (_watcher.EnableRaisingEvents)
+            {
+                _watcher.Changed -= FileWatcherEventHandler;
+                _watcher.Deleted -= FileWatcherEventHandler;
+                _watcher.Created -= FileWatcherEventHandler;
+                _watcher.Renamed -= FileWatcherEventHandler;
+                _watcher.EnableRaisingEvents = false;
+            }
+
+            _watcher?.Dispose();
+
+            _watcher = null;
+        }
+
         public void Start()
         {
             if (_watcher != null)
@@ -59,27 +80,6 @@ namespace Arbor.FileServer.Hashing
                     HashCreator.CreateHashFile(e.FullPath, supportedHashAlgorithm);
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            if (_watcher is null)
-            {
-                return;
-            }
-
-            if (_watcher.EnableRaisingEvents)
-            {
-                _watcher.Changed -= FileWatcherEventHandler;
-                _watcher.Deleted -= FileWatcherEventHandler;
-                _watcher.Created -= FileWatcherEventHandler;
-                _watcher.Renamed -= FileWatcherEventHandler;
-                _watcher.EnableRaisingEvents = false;
-            }
-
-            _watcher?.Dispose();
-
-            _watcher = null;
         }
     }
 }
