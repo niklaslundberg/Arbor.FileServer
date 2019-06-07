@@ -17,9 +17,11 @@ namespace Arbor.FileServer.Hashing
                 return false;
             }
 
-            return supportedHashAlgorithms.Any(algorithm =>
+            bool isHashFile = supportedHashAlgorithms.Any(algorithm =>
                 Path.GetExtension(fileInfo.FullName)
                     .Equals(algorithm.FileExtension, StringComparison.OrdinalIgnoreCase));
+
+            return isHashFile;
         }
 
         public static void CleanFiles(DirectoryInfo directoryInfo)

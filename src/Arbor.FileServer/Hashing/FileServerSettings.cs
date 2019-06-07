@@ -1,19 +1,23 @@
 ﻿using System;
+using System.IO;
+using Arbor.KVConfiguration.Urns;
 
 namespace Arbor.FileServer.Hashing
 {
+    [Urn(Urn)]
     public class FileServerSettings
     {
-        public FileServerSettings(string basePath, SupportedHashAlgorithm algorithm, string baseUrl)
+        public const string Urn = "urn:arbor-file-server:file-settings";
+
+        public FileServerSettings(
+            string basePath,
+            string baseUrl,
+            bool cleanEnabled = false,
+            bool settingsDiagnosticsEnabled = false)
         {
             if (string.IsNullOrWhiteSpace(basePath))
             {
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(basePath));
-            }
-
-            if (algorithm.IsEmpty)
-            {
-                throw new ArgumentException("Undefined hash algorithm.", nameof(algorithm));
             }
 
             if (string.IsNullOrWhiteSpace(baseUrl))
@@ -21,14 +25,22 @@ namespace Arbor.FileServer.Hashing
                 throw new ArgumentException("Value cannot be null or whitespace.", nameof(baseUrl));
             }
 
-            BasePath = basePath;
-            Algorithm = algorithm;
-            BaseUrl = baseUrl.TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(basePath))
+            {
+                throw new InvalidOperationException("The base path has not been set");
+            }
+
+            CleanEnabled = cleanEnabled;
+            SettingsDiagnosticsEnabled = settingsDiagnosticsEnabled;
+
+            BasePath = basePath.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            BaseUrl = baseUrl.TrimEnd('/') + "/";
         }
 
-        public string BasePath { get; }
+        public bool CleanEnabled { get; }
+        public bool SettingsDiagnosticsEnabled { get; }
 
-        public SupportedHashAlgorithm Algorithm { get; }
+        public string BasePath { get; }
 
         public string BaseUrl { get; }
     }

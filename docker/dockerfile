@@ -1,0 +1,16 @@
+ARG version
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-nanoserver-$version
+
+RUN mkdir files
+
+ENV urn:arbor-file-server:file-settings:default:basePath=c:\files
+ENV urn:arbor-file-server:file-settings:default:baseUrl=http://localhost:5000
+
+COPY app/ c:/app/
+
+VOLUME c:/files
+
+EXPOSE 80
+
+CMD dotnet c:/app/Arbor.FileServer.dll

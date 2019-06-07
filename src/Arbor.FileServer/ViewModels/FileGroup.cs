@@ -6,22 +6,22 @@ namespace Arbor.FileServer.ViewModels
     public class FileGroup
     {
         public FileGroup(
-            string mainFile,
-            string mainFileRelative,
-            DateTime lastModifiedUtc,
+            string mainFileAbsolutePath,
+            string mainFileRelativePath,
+            DateTime? lastModifiedUtc,
             ImmutableArray<HashFile> hashFiles)
         {
-            MainFile = mainFile;
-            MainFileRelative = mainFileRelative;
+            MainFileAbsolutePath = mainFileAbsolutePath;
+            MainFileRelativePath = mainFileRelativePath;
             LastModifiedUtc = lastModifiedUtc;
             HashFiles = hashFiles;
         }
 
-        public string MainFile { get; }
+        public string MainFileAbsolutePath { get; }
 
-        public string MainFileRelative { get; }
+        public string MainFileRelativePath { get; }
 
-        public DateTime LastModifiedUtc { get; }
+        public DateTime? LastModifiedUtc { get; }
 
         public ImmutableArray<HashFile> HashFiles { get; }
     }

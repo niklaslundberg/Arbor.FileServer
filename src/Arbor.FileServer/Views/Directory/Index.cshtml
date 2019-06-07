@@ -42,10 +42,10 @@
             {
                 <tr>
                     <td>
-                        <a title="@item.LastModifiedUtc.ToString("o")" href="@item.MainFile">@item.MainFileRelative</a>
+                        <a title="@item.LastModifiedUtc?.ToString("o")" href="@item.MainFileAbsolutePath">@item.MainFileRelativePath</a>
                     </td>
                     <td>
-                        <a href="/file@(item.MainFileRelative)">Metadata</a>
+                        <a href="/file/@(item.MainFileRelativePath)">Metadata</a>
                     </td>
 
                     @foreach (SupportedHashAlgorithm supportedHashAlgorithm in SupportedHashAlgorithm.All)
@@ -55,7 +55,7 @@
                             {
                                 if (hash.HashAlgorithm == supportedHashAlgorithm)
                                 {
-                                    <a title="@hash.LastModifiedUtc.ToString("O")" href="@hash.File">@hash.HashAlgorithm.AlgorithmName</a>
+                                    <a title="@hash.LastModifiedUtc?.ToString("O")" href="@hash.File">@hash.HashAlgorithm.AlgorithmName</a>
                                 }
                             }
                         </td>

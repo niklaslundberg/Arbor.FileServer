@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using Arbor.FileServer.Hashing;
+using Arbor.KVConfiguration.Core;
+using Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns;
+using Arbor.KVConfiguration.Urns;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -25,28 +28,19 @@ namespace Arbor.FileServer
             services.AddSingleton<HashWatcher>();
             services.AddHostedService<FileWatcherService>();
 
-            IConfigurationSection fileServer = Configuration.GetSection("file-server");
+            MultiSourceKeyValueConfiguration multiSourceKeyValueConfiguration = KeyValueConfigurationManager
+                .Add(new EnvironmentVariableKeyValueConfigurationSource())
+                .Add(new KeyValueConfigurationAdapter(Configuration))
+                .Build();
 
-            if (!SupportedHashAlgorithm.TryParse(fileServer.GetValue<string>("hashAlgorithm"),
-                out SupportedHashAlgorithm hashAlgorithm))
+            var fileServerSettings = multiSourceKeyValueConfiguration.GetInstance<FileServerSettings>();
+
+            if (!Directory.Exists(fileServerSettings.BasePath))
             {
-                throw new InvalidOperationException("The hash algorithm is not set");
+                throw new InvalidOperationException($"The base path '{fileServerSettings.BasePath}' does not exist");
             }
 
-            string basePath = fileServer.GetValue<string>("basePath");
-            string baseUrl = fileServer.GetValue<string>("baseUrl");
-
-            if (string.IsNullOrWhiteSpace(basePath))
-            {
-                throw new InvalidOperationException("The base path has not been set");
-            }
-
-            if (!Directory.Exists(basePath))
-            {
-                throw new InvalidOperationException($"The base path '{basePath}' does not exist");
-            }
-
-            services.AddSingleton(new FileServerSettings(basePath, hashAlgorithm, baseUrl));
+            services.AddSingleton(fileServerSettings);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

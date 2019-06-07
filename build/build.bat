@@ -10,12 +10,12 @@ SET Arbor.X.Build.VariableOverrideEnabled=true
 SET Arbor.X.Artifacts.CleanupBeforeBuildEnabled=true
 SET Arbor.X.Build.NetAssembly.Configuration=
 SET Arbor.X.Tools.External.MSBuild.AllowPrerelease.Enabled=false
-SET Arbor.X.Build.WebProjectsBuild.Enabled=false
+SET Arbor.X.Build.WebProjectsBuild.Enabled=true
 SET Arbor.X.MSBuild.NuGetRestore.Enabled=true
 SET Arbor.X.NuGet.ReinstallArborPackageEnabled=true
 SET Arbor.X.NuGet.VersionUpdateEnabled=false
 SET Arbor.X.Artifacts.PdbArtifacts.Enabled=true
-SET Arbor.X.NuGet.Package.CreateNuGetWebPackages.Enabled=false
+SET Arbor.X.NuGet.Package.CreateNuGetWebPackages.Enabled=true
 SET Arbor.X.Tools.External.Xunit.NetCoreApp.Enabled=false
 SET Arbor.X.Tools.External.Xunit.NetFramework.Enabled=false
 

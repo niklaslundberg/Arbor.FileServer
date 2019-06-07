@@ -8,7 +8,7 @@ namespace Arbor.FileServer.ViewModels
         public HashFile(
             string file,
             string relativePath,
-            DateTime lastModifiedUtc,
+            DateTime? lastModifiedUtc,
             SupportedHashAlgorithm hashAlgorithm)
         {
             File = file;
@@ -21,7 +21,7 @@ namespace Arbor.FileServer.ViewModels
 
         public string RelativePath { get; }
 
-        public DateTime LastModifiedUtc { get; }
+        public DateTime? LastModifiedUtc { get; }
 
         public SupportedHashAlgorithm HashAlgorithm { get; }
     }

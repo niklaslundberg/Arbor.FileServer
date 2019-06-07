@@ -1,15 +1,26 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Arbor.FileServer
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            IWebHost webHost = CreateWebHostBuilder(args).Build();
+            try
+            {
+                IWebHost webHost = CreateWebHostBuilder(args).Build();
 
-            webHost.Run();
+                webHost.Run();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return 1;
+            }
+
+            return 0;
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)

@@ -12,6 +12,11 @@ namespace Arbor.FileServer.Controllers
         [Route("/clean")]
         public object Clean([FromServices] FileServerSettings fileServerSettings)
         {
+            if (!fileServerSettings.CleanEnabled)
+            {
+                return Redirect("/");
+            }
+
             var directoryInfo = new DirectoryInfo(fileServerSettings.BasePath);
 
             ImmutableArray<string> removedFiles = HashCreator.RemoveAllHashFiles(directoryInfo);
@@ -26,7 +31,7 @@ namespace Arbor.FileServer.Controllers
 
         [HttpGet]
         [Route("/files")]
-        public object Files([FromServices] FileServerSettings fileServerSettings)
+        public ActionResult<FilesViewModel> Files([FromServices] FileServerSettings fileServerSettings)
         {
             FilesViewModel filesViewModel = fileServerSettings.CreateViewModel();
             return filesViewModel;

@@ -8,7 +8,7 @@ namespace Arbor.FileServer.ViewModels
 {
     public static class ViewModelHelper
     {
-        public static FilesViewModel CreateViewModel(this FileServerSettings fileServerSettings)
+        public static FilesViewModel CreateViewModel(this FileServerSettings fileServerSettings, FileInfo[] directoryFiles = null)
         {
             string GetMainFile(FileInfo file)
             {
@@ -17,20 +17,31 @@ namespace Arbor.FileServer.ViewModels
                     return file.FullName;
                 }
 
-                return HashCreator.IsHashFile(file, SupportedHashAlgorithm.All)
+                string fileFullName = HashCreator.IsHashFile(file, SupportedHashAlgorithm.All)
                     ? Path.Combine(file.Directory.FullName, Path.GetFileNameWithoutExtension(file.Name))
                     : file.FullName;
+
+                return fileFullName;
             }
 
             string AbsolutePath(string file)
             {
                 return fileServerSettings.BaseUrl +
-                       file.Substring(fileServerSettings.BasePath.Length).Replace("\\", "/");
+                       file.Substring(fileServerSettings.BasePath.Length)
+                           .Replace("\\", "/")
+                           .Replace("//", "/")
+                           .TrimStart('/');
             }
 
             string RelativePath(string file)
             {
-                return file.Substring(fileServerSettings.BaseUrl.Length);
+                if (!file.Contains(fileServerSettings.BaseUrl))
+                {
+                    throw new InvalidOperationException(
+                        $"File {file} does not contain the base url {fileServerSettings.BaseUrl}");
+                }
+
+                return file.Substring(fileServerSettings.BaseUrl.Length).TrimStart('/');
             }
 
             SupportedHashAlgorithm Parse(string file)
@@ -54,9 +65,20 @@ namespace Arbor.FileServer.ViewModels
                 return supportedHashAlgorithms[0];
             }
 
+            DateTime? LastWriteTimeUtc(FileInfo file)
+            {
+                if (file.Exists)
+                {
+                    return file.LastWriteTimeUtc;
+                }
+
+                return default;
+            }
+
             var directoryInfo = new DirectoryInfo(fileServerSettings.BasePath);
-            ImmutableArray<FileGroup> files = directoryInfo.GetFiles("*", SearchOption.AllDirectories)
-                .Select(file => (File: file, MainFile: GetMainFile(file), LastModified: file.LastWriteTimeUtc))
+            FileInfo[] fileInfos = (directoryFiles ?? directoryInfo.GetFiles("*", SearchOption.AllDirectories));
+            ImmutableArray<FileGroup> files = fileInfos
+                .Select(file => (File: file, MainFile: GetMainFile(file), LastModified: LastWriteTimeUtc(file)))
                 .Select(file => (File: AbsolutePath(file.File.FullName), MainFile: AbsolutePath(file.MainFile),
                     LastModified: file.LastModified))
                 .OrderBy(file => file.File)
